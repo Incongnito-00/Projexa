@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Browse Projects | Projexa</title>
+
+<link rel="stylesheet" href="../css/main.css">
+
+<style>
+
+body{
+
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f5f7fb;
+
+}
+
+.navbar{
+
+    background:#4F46E5;
+    color:white;
+
+    padding:18px 30px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+}
+
+.navbar a{
+
+    color:white;
+    text-decoration:none;
+
+}
+
+.container{
+
+    width:90%;
+    margin:30px auto;
+
+}
+
+.controls{
+
+    display:flex;
+    gap:15px;
+    margin-bottom:25px;
+
+}
+
+.controls input,
+.controls select{
+
+    padding:12px;
+    border-radius:8px;
+    border:1px solid #ccc;
+    font-size:15px;
+
+}
+
+.controls input{
+
+    flex:1;
+
+}
+
+#projectList{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+
+    gap:20px;
+
+}
+
+.card{
+
+    background:white;
+
+    padding:20px;
+
+    border-radius:12px;
+
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+
+}
+
+.card h2{
+
+    color:#4F46E5;
+
+}
+
+button{
+
+    margin-top:15px;
+
+    background:#4F46E5;
+
+    color:white;
+
+    border:none;
+
+    padding:10px 18px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+}
+
+button:hover{
+
+    background:#4338CA;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<nav class="navbar">
+
+<h2>🚀 PROJEXA</h2>
+
+<a href="dashboard.html">
+
+Dashboard
+
+</a>
+
+</nav>
+
+<div class="container">
+
+<h1>Browse Engineering Projects</h1>
+
+<div class="controls">
+
+<input
+
+id="search"
+
+type="text"
+
+placeholder="🔍 Search Projects..."
+
+onkeyup="searchProjects()">
+
+<select
+
+id="filter"
+
+onchange="searchProjects()">
+
+<option value="">All Categories</option>
+
+<option>Robotics</option>
+
+<option>IoT</option>
+
+<option>AI / ML</option>
+
+<option>Electronics</option>
+
+<option>Mechanical</option>
+
+<option>Software</option>
+
+<option>Web Development</option>
+
+<option>Mobile App</option>
+
+</select>
+
+</div>
+
+<div id="projectList">
+
+Loading...
+
+</div>
+
+</div>
+
+<script src="../js/browse.js"></script>
+
+</body>
+
+</html>
