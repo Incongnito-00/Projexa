@@ -1,13 +1,19 @@
 const API = "https://projexa-backend-13sp.onrender.com/api";
 
-document.getElementById("signupForm").addEventListener("submit", async (e) => {
+const signupForm = document.getElementById("signupForm");
 
+signupForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const name = document.getElementById("fullname").value.trim();
     const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
-    const confirmPassword = document.getElementById("confirmPassword").value;
+    const password = document.getElementById("password").value.trim();
+    const confirmPassword = document.getElementById("confirmPassword").value.trim();
+
+    if (!name || !email || !password || !confirmPassword) {
+        alert("Please fill all fields.");
+        return;
+    }
 
     if (password !== confirmPassword) {
         alert("Passwords do not match.");
@@ -15,31 +21,34 @@ document.getElementById("signupForm").addEventListener("submit", async (e) => {
     }
 
     try {
-
         const response = await fetch(`${API}/auth/register`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                name,
-                email,
-                password,
+                name: name,
+                email: email,
+                password: password,
                 role: "student"
             })
         });
 
         const data = await response.json();
 
-        alert(data.message);
+        if (response.ok) {
+            alert("Registration Successful!");
 
-        if (data.success) {
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("user", JSON.stringify(data.user));
+
             window.location.href = "login.html";
+        } else {
+            alert(data.message || "Registration Failed");
         }
 
-    } catch (err) {
-        console.error(err);
+    } catch (error) {
+        console.error(error);
         alert("Unable to connect to server.");
     }
-
 });
