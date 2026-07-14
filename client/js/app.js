@@ -1,58 +1,122 @@
-const API = "https://projexa-backend-13sp.onrender.com/api";
+require("dotenv").config();
 
-const loginForm = document.getElementById("loginForm");
+const express = require("express");
+const cors = require("cors");
 
-if (loginForm) {
+require("./database");
 
-    loginForm.addEventListener("submit", async (e) => {
+const authRoutes = require("./routes/auth");
+const projectRoutes = require("./routes/projects");
+const applicationRoutes = require("./routes/applications");
 
-        e.preventDefault();
+const app = express();
 
-        const email = document.getElementById("email").value;
-        const password = document.getElementById("password").value;
+// =======================
+// CORS
+// =======================
 
-        try {
+const allowedOrigins = [
+  "http://localhost:5500",
+  "http://127.0.0.1:5500",
+  "https://incongnito-00.github.io",
+  process.env.FRONTEND_URL,
+].filter(Boolean);
 
-            const response = await fetch(`${API}/auth/login`, {
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Allow requests with no origin (Postman, curl, etc.)
+      if (!origin) return callback(null, true);
 
-                method: "POST",
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
 
-                headers: {
-                    "Content-Type": "application/json"
-                },
+      console.log("Blocked Origin:", origin);
 
-                body: JSON.stringify({
-                    email,
-                    password
-                })
+      return callback(new Error("Not allowed by CORS"));
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  })
+);
 
-            });
+app.options("*", cors());
 
-            const data = await response.json();
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-            if (data.success) {
+// =======================
+// Home
+// =======================
 
-                localStorage.setItem(
-                    "user",
-                    JSON.stringify(data.user)
-                );
+app.get("/", (req, res) => {
+  res.json({
+    success: true,
+    project: "Projexa V2 Backend",
+    version: "2.0",
+    status: "Running 🚀",
+  });
+});
 
-                alert("Login Successful!");
+// =======================
+// Health
+// =======================
 
-                window.location.href = "dashboard.html";
+app.get("/api/health", (req, res) => {
+  res.json({
+    success: true,
+    database: "Connected",
+    server: "Running",
+    uptime: process.uptime(),
+  });
+});
 
-            } else {
+// =======================
+// Routes
+// =======================
 
-                alert(data.message);
+app.use("/api/auth", authRoutes);
+app.use("/api/projects", projectRoutes);
+app.use("/api/applications", applicationRoutes);
 
-            }
+// =======================
+// 404
+// =======================
 
-        } catch (error) {
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: "Route Not Found",
+  });
+});
 
-            alert("Server not reachable");
+// =======================
+// Error Handler
+// =======================
 
-        }
+app.use((err, req, res, next) => {
+  console.error(err);
 
-    });
+  res.status(500).json({
+    success: false,
+    message: err.message || "Internal Server Error",
+  });
+});
 
-}
+// =======================
+// Start Server
+// =======================
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log("==================================");
+  console.log("🚀 PROJEXA V2 BACKEND STARTED");
+  console.log(`🌐 http://localhost:${PORT}`);
+  console.log("✅ PostgreSQL");
+  console.log("✅ JWT");
+  console.log("✅ Google Login");
+  console.log("==================================");
+});
