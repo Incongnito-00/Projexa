@@ -1,4 +1,4 @@
-const API = "https://projexa-api-kfjs.onrender.com/api";
+const API = "https://projexa-backend-13sp.onrender.com/api";
 
 // Logged in user
 const user = JSON.parse(localStorage.getItem("user"));

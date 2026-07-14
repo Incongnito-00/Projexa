@@ -1,291 +1,262 @@
 const express = require("express");
+const jwt = require("jsonwebtoken");
 const db = require("../database");
 
 const router = express.Router();
 
-/* ==========================================
-   CREATE PROJECT
-========================================== */
+const JWT_SECRET = process.env.JWT_SECRET;
 
-router.post("/", (req, res) => {
+// =====================
+// JWT Middleware
+// =====================
 
+function authenticate(req, res, next) {
+  const header = req.headers.authorization;
+
+  if (!header) {
+    return res.status(401).json({
+      success: false,
+      message: "Token missing",
+    });
+  }
+
+  const token = header.split(" ")[1];
+
+  try {
+    req.user = jwt.verify(token, JWT_SECRET);
+    next();
+  } catch (err) {
+    return res.status(401).json({
+      success: false,
+      message: "Invalid token",
+    });
+  }
+}
+
+// =====================
+// Create Project
+// =====================
+
+router.post("/", authenticate, async (req, res) => {
+  try {
     const {
-        title,
-        description,
-        category,
-        budget,
-        deadline,
-        owner
+      title,
+      category,
+      description,
+      requirements,
+      budget,
     } = req.body;
 
-    if (!title || !description || !category) {
+    const result = await db.query(
+      `INSERT INTO projects
+      (owner_id,title,category,description,requirements,budget)
+      VALUES($1,$2,$3,$4,$5,$6)
+      RETURNING *`,
+      [
+        req.user.id,
+        title,
+        category,
+        description,
+        requirements,
+        budget,
+      ]
+    );
 
-        return res.status(400).json({
-            success: false,
-            message: "Please fill all required fields"
-        });
+    res.json({
+      success: true,
+      project: result.rows[0],
+    });
+  } catch (err) {
+    console.error(err);
 
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+});
+
+// =====================
+// Get All Projects
+// =====================
+
+router.get("/", async (req, res) => {
+  try {
+    const result = await db.query(`
+      SELECT
+      projects.*,
+      users.name AS owner_name,
+      users.email AS owner_email,
+      users.profile_image
+      FROM projects
+      JOIN users
+      ON users.id = projects.owner_id
+      ORDER BY projects.created_at DESC
+    `);
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+});
+
+// =====================
+// Get Single Project
+// =====================
+
+router.get("/:id", async (req, res) => {
+  try {
+    const result = await db.query(
+      `
+      SELECT
+      projects.*,
+      users.name AS owner_name,
+      users.email AS owner_email
+      FROM projects
+      JOIN users
+      ON users.id=projects.owner_id
+      WHERE projects.id=$1
+    `,
+      [req.params.id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Project not found",
+      });
     }
 
-    db.run(
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
 
-        `INSERT INTO projects
-        (title,description,category,budget,deadline,owner)
-        VALUES(?,?,?,?,?,?)`,
-
-        [
-            title,
-            description,
-            category,
-            budget || "",
-            deadline || "",
-            owner || null
-        ],
-
-        function (err) {
-
-            if (err) {
-
-                return res.status(500).json({
-                    success: false,
-                    message: err.message
-                });
-
-            }
-
-            res.json({
-                success: true,
-                message: "Project Created Successfully",
-                projectId: this.lastID
-            });
-
-        }
-
-    );
-
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
 });
 
+// =====================
+// Update Project
+// =====================
 
-/* ==========================================
-   GET ALL PROJECTS
-========================================== */
-
-router.get("/", (req, res) => {
-
-    db.all(
-
-        `SELECT *
-         FROM projects
-         ORDER BY created_at DESC`,
-
-        [],
-
-        (err, rows) => {
-
-            if (err) {
-
-                return res.status(500).json({
-                    success: false,
-                    message: err.message
-                });
-
-            }
-
-            res.json({
-                success: true,
-                projects: rows
-            });
-
-        }
-
-    );
-
-});
-
-
-/* ==========================================
-   MY PROJECTS
-========================================== */
-
-router.get("/owner/:ownerId", (req, res) => {
-
-    db.all(
-
-        `SELECT *
-         FROM projects
-         WHERE owner=?
-         ORDER BY created_at DESC`,
-
-        [req.params.ownerId],
-
-        (err, rows) => {
-
-            if (err) {
-
-                return res.status(500).json({
-                    success: false,
-                    message: err.message
-                });
-
-            }
-
-            res.json({
-                success: true,
-                projects: rows
-            });
-
-        }
-
-    );
-
-});
-
-
-/* ==========================================
-   GET SINGLE PROJECT
-========================================== */
-
-router.get("/:id", (req, res) => {
-
-    db.get(
-
-        `SELECT *
-         FROM projects
-         WHERE id=?`,
-
-        [req.params.id],
-
-        (err, row) => {
-
-            if (err) {
-
-                return res.status(500).json({
-                    success: false,
-                    message: err.message
-                });
-
-            }
-
-            if (!row) {
-
-                return res.status(404).json({
-                    success: false,
-                    message: "Project Not Found"
-                });
-
-            }
-
-            res.json({
-                success: true,
-                project: row
-            });
-
-        }
-
-    );
-
-});
-
-
-/* ==========================================
-   UPDATE PROJECT
-========================================== */
-
-router.put("/:id", (req, res) => {
-
+router.put("/:id", authenticate, async (req, res) => {
+  try {
     const {
-
-        title,
-        description,
-        category,
-        budget,
-        deadline
-
+      title,
+      category,
+      description,
+      requirements,
+      budget,
+      status,
     } = req.body;
 
-    db.run(
-
-        `UPDATE projects
-         SET
-         title=?,
-         description=?,
-         category=?,
-         budget=?,
-         deadline=?
-         WHERE id=?`,
-
-        [
-
-            title,
-            description,
-            category,
-            budget,
-            deadline,
-            req.params.id
-
-        ],
-
-        function (err) {
-
-            if (err) {
-
-                return res.status(500).json({
-                    success: false,
-                    message: err.message
-                });
-
-            }
-
-            res.json({
-
-                success: true,
-                message: "Project Updated"
-
-            });
-
-        }
-
+    const owner = await db.query(
+      "SELECT owner_id FROM projects WHERE id=$1",
+      [req.params.id]
     );
 
-});
+    if (owner.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Project not found",
+      });
+    }
 
+    if (owner.rows[0].owner_id !== req.user.id) {
+      return res.status(403).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
 
-/* ==========================================
-   DELETE PROJECT
-========================================== */
-
-router.delete("/:id", (req, res) => {
-
-    db.run(
-
-        `DELETE FROM projects
-         WHERE id=?`,
-
-        [req.params.id],
-
-        function (err) {
-
-            if (err) {
-
-                return res.status(500).json({
-                    success: false,
-                    message: err.message
-                });
-
-            }
-
-            res.json({
-
-                success: true,
-                message: "Project Deleted"
-
-            });
-
-        }
-
+    const updated = await db.query(
+      `
+      UPDATE projects
+      SET
+      title=$1,
+      category=$2,
+      description=$3,
+      requirements=$4,
+      budget=$5,
+      status=$6
+      WHERE id=$7
+      RETURNING *
+    `,
+      [
+        title,
+        category,
+        description,
+        requirements,
+        budget,
+        status,
+        req.params.id,
+      ]
     );
 
+    res.json({
+      success: true,
+      project: updated.rows[0],
+    });
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
 });
 
+// =====================
+// Delete Project
+// =====================
+
+router.delete("/:id", authenticate, async (req, res) => {
+  try {
+    const owner = await db.query(
+      "SELECT owner_id FROM projects WHERE id=$1",
+      [req.params.id]
+    );
+
+    if (owner.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Project not found",
+      });
+    }
+
+    if (owner.rows[0].owner_id !== req.user.id) {
+      return res.status(403).json({
+        success: false,
+        message: "Unauthorized",
+      });
+    }
+
+    await db.query(
+      "DELETE FROM projects WHERE id=$1",
+      [req.params.id]
+    );
+
+    res.json({
+      success: true,
+      message: "Project deleted",
+    });
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+});
 
 module.exports = router;

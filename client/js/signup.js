@@ -1,4 +1,4 @@
-const API = "https://projexa-api-kfjs.onrender.com/api";
+const API = "https://projexa-backend-13sp.onrender.com/api";
 
 document.getElementById("signupForm").addEventListener("submit", async (e) => {
 

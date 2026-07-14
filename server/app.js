@@ -1,8 +1,8 @@
-const express = require("express");
-const cors = require("cors");
 require("dotenv").config();
 
-// Initialize database
+const express = require("express");
+const cors = require("cors");
+
 require("./database");
 
 const authRoutes = require("./routes/auth");
@@ -10,82 +10,96 @@ const projectRoutes = require("./routes/projects");
 const applicationRoutes = require("./routes/applications");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
-// =========================
+// =======================
 // Middleware
-// =========================
+// =======================
 
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5500",
+      "http://127.0.0.1:5500",
+      "http://localhost:3000",
+      process.env.FRONTEND_URL,
+    ],
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// =========================
-// Root Route
-// =========================
+// =======================
+// Home
+// =======================
 
 app.get("/", (req, res) => {
-    res.json({
-        success: true,
-        app: "Projexa API",
-        version: "1.0.0",
-        message: "Backend Running Successfully"
-    });
+  res.json({
+    success: true,
+    project: "Projexa V2 Backend",
+    version: "2.0",
+    status: "Running 🚀",
+  });
 });
 
-// =========================
+// =======================
 // Health Check
-// =========================
+// =======================
 
 app.get("/api/health", (req, res) => {
-    res.json({
-        success: true,
-        status: "Running",
-        database: "Connected"
-    });
+  res.json({
+    success: true,
+    database: "Connected",
+    server: "Running",
+    uptime: process.uptime(),
+  });
 });
 
-// =========================
-// API Routes
-// =========================
+// =======================
+// Routes
+// =======================
 
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/applications", applicationRoutes);
 
-// =========================
-// 404 Handler
-// =========================
+// =======================
+// 404
+// =======================
 
 app.use((req, res) => {
-    res.status(404).json({
-        success: false,
-        message: "API Route Not Found"
-    });
+  res.status(404).json({
+    success: false,
+    message: "Route Not Found",
+  });
 });
 
-// =========================
+// =======================
 // Error Handler
-// =========================
+// =======================
 
 app.use((err, req, res, next) => {
-    console.error(err);
+  console.error(err);
 
-    res.status(500).json({
-        success: false,
-        message: "Internal Server Error"
-    });
+  res.status(500).json({
+    success: false,
+    message: "Internal Server Error",
+  });
 });
 
-// =========================
+// =======================
 // Start Server
-// =========================
+// =======================
+
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-    console.log("======================================");
-    console.log("🚀 PROJEXA BACKEND");
-    console.log("======================================");
-    console.log(`Server : http://localhost:${PORT}`);
-    console.log(`Health : http://localhost:${PORT}/api/health`);
-    console.log("======================================");
+  console.log("==================================");
+  console.log("🚀 PROJEXA V2 BACKEND STARTED");
+  console.log(`🌐 http://localhost:${PORT}`);
+  console.log("✅ PostgreSQL");
+  console.log("✅ JWT");
+  console.log("✅ Google Login");
+  console.log("==================================");
 });
