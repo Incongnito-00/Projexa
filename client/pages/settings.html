@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Settings | Projexa</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Inter,sans-serif;
+}
+
+body{
+background:#090909;
+color:#fff;
+}
+
+.wrapper{
+display:flex;
+min-height:100vh;
+}
+
+.sidebar{
+
+width:260px;
+background:#111;
+border-right:1px solid #222;
+padding:25px;
+position:fixed;
+top:0;
+left:0;
+bottom:0;
+
+}
+
+.logo{
+
+font-size:28px;
+font-weight:800;
+color:#A6FF00;
+margin-bottom:40px;
+
+}
+
+.menu{
+
+display:flex;
+flex-direction:column;
+gap:12px;
+
+}
+
+.menu a{
+
+text-decoration:none;
+padding:14px 18px;
+border-radius:10px;
+color:#ddd;
+transition:.3s;
+
+}
+
+.menu a:hover{
+
+background:#1f1f1f;
+color:#A6FF00;
+
+}
+
+.menu a.active{
+
+background:#A6FF00;
+color:#000;
+font-weight:700;
+
+}
+
+.main{
+
+margin-left:260px;
+width:calc(100% - 260px);
+padding:40px;
+
+}
+
+.pageTitle{
+
+font-size:40px;
+font-weight:800;
+margin-bottom:30px;
+
+}
+
+.card{
+
+background:#131313;
+border:1px solid #222;
+border-radius:18px;
+padding:30px;
+margin-bottom:25px;
+
+}
+
+.card h2{
+
+margin-bottom:20px;
+
+}
+
+.field{
+
+margin-bottom:20px;
+
+}
+
+label{
+
+display:block;
+margin-bottom:8px;
+font-weight:600;
+
+}
+
+input{
+
+width:100%;
+padding:15px;
+border-radius:10px;
+background:#1d1d1d;
+border:1px solid #333;
+color:#fff;
+outline:none;
+
+}
+
+button{
+
+padding:14px 28px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+font-weight:700;
+margin-right:15px;
+
+}
+
+.save{
+
+background:#A6FF00;
+color:#000;
+
+}
+
+.logout{
+
+background:#d13c3c;
+color:#fff;
+
+}
+
+.message{
+
+margin-top:20px;
+padding:15px;
+display:none;
+border-radius:10px;
+
+}
+
+.success{
+
+background:#1c3822;
+color:#7dff9a;
+
+}
+
+.error{
+
+background:#3c1919;
+color:#ff9696;
+
+}
+
+.switch{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:18px;
+background:#1b1b1b;
+border-radius:12px;
+margin-bottom:15px;
+
+}
+
+.switch input{
+
+width:25px;
+height:25px;
+
+}
+
+@media(max-width:900px){
+
+.sidebar{
+
+position:relative;
+width:100%;
+height:auto;
+
+}
+
+.wrapper{
+
+flex-direction:column;
+
+}
+
+.main{
+
+margin:0;
+width:100%;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="wrapper">
+
+<div class="sidebar">
+
+<div class="logo">
+
+PROJEXA
+
+</div>
+
+<div class="menu">
+
+<a href="dashboard.html">Dashboard</a>
+
+<a href="browse.html">Browse Projects</a>
+
+<a href="post-project.html">Post Project</a>
+
+<a href="applications.html">Applications</a>
+
+<a href="profile.html">Profile</a>
+
+<a href="settings.html" class="active">Settings</a>
+
+<a href="../index.html">Logout</a>
+
+</div>
+
+</div>
+
+<div class="main">
+
+<h1 class="pageTitle">
+
+Settings
+
+</h1>
+
+<div class="card">
+
+<h2>Account Information</h2>
+
+<div class="field">
+
+<label>Name</label>
+
+<input
+type="text"
+id="name">
+
+</div>
+
+<div class="field">
+
+<label>Email</label>
+
+<input
+type="email"
+id="email"
+disabled>
+
+</div>
+
+<div class="field">
+
+<label>College</label>
+
+<input
+type="text"
+id="college">
+
+</div>
+
+<button
+class="save"
+id="saveProfile">
+
+Save Changes
+
+</button>
+
+</div>
+
+<div class="card">
+
+<h2>Change Password</h2>
+
+<div class="field">
+
+<label>Current Password</label>
+
+<input
+type="password"
+id="currentPassword">
+
+</div>
+
+<div class="field">
+
+<label>New Password</label>
+
+<input
+type="password"
+id="newPassword">
+
+</div>
+
+<button
+class="save"
+id="changePassword">
+
+Update Password
+
+</button>
+
+</div>
+
+<div class="card">
+
+<h2>Preferences</h2>
+
+<div class="switch">
+
+<span>Email Notifications</span>
+
+<input
+type="checkbox"
+id="notifications">
+
+</div>
+
+<div class="switch">
+
+<span>Public Profile</span>
+
+<input
+type="checkbox"
+id="publicProfile">
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>Session</h2>
+
+<button
+class="logout"
+id="logout">
+
+Logout
+
+</button>
+
+</div>
+
+<div
+id="success"
+class="message success">
+
+Saved successfully.
+
+</div>
+
+<div
+id="error"
+class="message error">
+
+Something went wrong.
+
+</div>
+
+</div>
+
+</div>
+
+<script src="../js/config.js"></script>
+<script src="../js/settings.js"></script>
+
+</body>
+
+</html>

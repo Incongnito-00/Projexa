@@ -3,244 +3,429 @@
 
 <head>
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Create Project | Projexa</title>
+<title>Post Project | Projexa</title>
 
-    <link rel="stylesheet" href="../css/main.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-            font-family:Arial, Helvetica, sans-serif;
-        }
+<style>
 
-        body{
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Inter,sans-serif;
+}
 
-            background:#f4f7fb;
+body{
+background:#090909;
+color:#fff;
+}
 
-        }
+.wrapper{
+display:flex;
+min-height:100vh;
+}
 
-        .navbar{
+.sidebar{
+width:260px;
+background:#111;
+border-right:1px solid #222;
+padding:25px;
+position:fixed;
+left:0;
+top:0;
+bottom:0;
+}
 
-            background:#4F46E5;
-            color:white;
-            padding:18px 30px;
+.logo{
+font-size:28px;
+font-weight:800;
+color:#A6FF00;
+margin-bottom:40px;
+}
 
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
+.menu{
+display:flex;
+flex-direction:column;
+gap:12px;
+}
 
-        }
+.menu a{
+padding:14px 18px;
+border-radius:10px;
+text-decoration:none;
+color:#ddd;
+transition:.3s;
+}
 
-        .navbar h2{
+.menu a:hover{
+background:#1d1d1d;
+color:#A6FF00;
+}
 
-            margin:0;
+.menu a.active{
+background:#A6FF00;
+color:#000;
+font-weight:700;
+}
 
-        }
+.main{
+margin-left:260px;
+width:calc(100% - 260px);
+padding:40px;
+}
 
-        .navbar a{
+.pageTitle{
+font-size:38px;
+font-weight:800;
+margin-bottom:10px;
+}
 
-            color:white;
-            text-decoration:none;
-            background:rgba(255,255,255,.2);
-            padding:10px 18px;
-            border-radius:8px;
+.pageSubtitle{
+color:#888;
+margin-bottom:35px;
+}
 
-        }
+.formCard{
 
-        .container{
+background:#131313;
+border:1px solid #222;
+border-radius:18px;
+padding:35px;
 
-            width:700px;
-            max-width:95%;
+}
 
-            margin:40px auto;
+.grid{
 
-            background:white;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+gap:25px;
 
-            padding:30px;
+}
 
-            border-radius:15px;
+.field{
 
-            box-shadow:0 10px 25px rgba(0,0,0,.1);
+display:flex;
+flex-direction:column;
+gap:10px;
 
-        }
+}
 
-        h1{
+label{
 
-            margin-bottom:25px;
-            color:#4F46E5;
+font-weight:600;
 
-        }
+}
 
-        label{
+input,
+select,
+textarea{
 
-            font-weight:bold;
+background:#1b1b1b;
+border:1px solid #333;
+color:#fff;
+padding:15px;
+border-radius:10px;
+outline:none;
+font-size:15px;
 
-            display:block;
+}
 
-            margin-top:18px;
+textarea{
 
-        }
+resize:vertical;
+min-height:180px;
 
-        input,
-        textarea,
-        select{
+}
 
-            width:100%;
+.full{
 
-            margin-top:8px;
+grid-column:1/-1;
 
-            padding:12px;
+}
 
-            border:1px solid #ccc;
+.actions{
 
-            border-radius:8px;
+margin-top:30px;
+display:flex;
+gap:20px;
+flex-wrap:wrap;
 
-            font-size:15px;
+}
 
-        }
+button{
 
-        textarea{
+padding:15px 35px;
+border:none;
+border-radius:10px;
+font-size:16px;
+font-weight:700;
+cursor:pointer;
 
-            resize:none;
-            height:140px;
+}
 
-        }
+.publish{
 
-        button{
+background:#A6FF00;
+color:#000;
 
-            margin-top:25px;
+}
 
-            width:100%;
+.reset{
 
-            background:#4F46E5;
+background:#222;
+color:#fff;
 
-            color:white;
+}
 
-            border:none;
+.success{
 
-            padding:15px;
+margin-top:20px;
+padding:15px;
+border-radius:10px;
+display:none;
+background:#1c3520;
+color:#7CFF8A;
 
-            font-size:17px;
+}
 
-            border-radius:10px;
+.error{
 
-            cursor:pointer;
+margin-top:20px;
+padding:15px;
+border-radius:10px;
+display:none;
+background:#3b1a1a;
+color:#ff9b9b;
 
-            transition:.3s;
+}
 
-        }
+@media(max-width:900px){
 
-        button:hover{
+.sidebar{
+position:relative;
+width:100%;
+height:auto;
+}
 
-            background:#4338CA;
+.wrapper{
+flex-direction:column;
+}
 
-        }
+.main{
+margin:0;
+width:100%;
+}
 
-    </style>
+}
+
+</style>
 
 </head>
 
 <body>
 
-    <div class="navbar">
+<div class="wrapper">
 
-        <h2>🚀 PROJEXA</h2>
+<div class="sidebar">
 
-        <a href="dashboard.html">
+<div class="logo">
 
-            ← Dashboard
+PROJEXA
 
-        </a>
+</div>
 
-    </div>
+<div class="menu">
 
-    <div class="container">
+<a href="dashboard.html">Dashboard</a>
 
-        <h1>Create New Project</h1>
+<a href="browse.html">Browse Projects</a>
 
-        <form id="projectForm">
+<a href="post-project.html" class="active">Post Project</a>
 
-            <label>
+<a href="applications.html">Applications</a>
 
-                Project Title
+<a href="profile.html">Profile</a>
 
-            </label>
+<a href="settings.html">Settings</a>
 
-            <input
-                type="text"
-                id="title"
-                placeholder="Enter Project Title"
-                required>
+<a href="../index.html">Logout</a>
 
-            <label>
+</div>
 
-                Description
+</div>
 
-            </label>
+<div class="main">
 
-            <textarea
-                id="description"
-                placeholder="Describe your project..."
-                required></textarea>
+<h1 class="pageTitle">
 
-            <label>
+Post New Project
 
-                Category
+</h1>
 
-            </label>
+<p class="pageSubtitle">
 
-            <select id="category">
+Find teammates, developers and collaborators for your next big idea.
 
-                <option>Robotics</option>
-                <option>AI / ML</option>
-                <option>IoT</option>
-                <option>Electronics</option>
-                <option>Mechanical</option>
-                <option>Software</option>
-                <option>Web Development</option>
-                <option>Mobile App</option>
+</p>
 
-            </select>
+<div class="formCard">
 
-            <label>
+<form id="projectForm">
 
-                Budget (₹)
+<div class="grid">
 
-            </label>
+<div class="field">
 
-            <input
-                type="number"
-                id="budget"
-                placeholder="Enter Budget">
+<label>Project Title</label>
 
-            <label>
+<input
+type="text"
+id="title"
+required
+placeholder="Enter project title">
 
-                Deadline
+</div>
 
-            </label>
+<div class="field">
 
-            <input
-                type="date"
-                id="deadline">
+<label>Category</label>
 
-            <button type="submit">
+<select id="category" required>
 
-                🚀 Create Project
+<option value="">Select</option>
 
-            </button>
+<option>Web Development</option>
 
-        </form>
+<option>Mobile App</option>
 
-    </div>
+<option>AI</option>
 
-    <!-- IMPORTANT -->
-    <script src="../js/post-project.js"></script>
+<option>Machine Learning</option>
+
+<option>IoT</option>
+
+<option>Cyber Security</option>
+
+<option>Mechanical</option>
+
+<option>Electronics</option>
+
+<option>Embedded Systems</option>
+
+</select>
+
+</div>
+
+<div class="field">
+
+<label>Difficulty</label>
+
+<select id="level">
+
+<option>Beginner</option>
+
+<option>Intermediate</option>
+
+<option>Advanced</option>
+
+</select>
+
+</div>
+
+<div class="field">
+
+<label>Status</label>
+
+<select id="status">
+
+<option>Open</option>
+
+<option>Hiring</option>
+
+<option>In Progress</option>
+
+</select>
+
+</div>
+
+<div class="field full">
+
+<label>Required Skills</label>
+
+<input
+type="text"
+id="skills"
+placeholder="React, Node.js, Python, ESP32">
+
+</div>
+
+<div class="field full">
+
+<label>Description</label>
+
+<textarea
+id="description"
+required
+placeholder="Describe your project..."></textarea>
+
+</div>
+
+</div>
+
+<div class="actions">
+
+<button
+type="submit"
+class="publish"
+id="submitBtn">
+
+Publish Project
+
+</button>
+
+<button
+type="reset"
+class="reset">
+
+Reset
+
+</button>
+
+</div>
+
+<div
+class="success"
+id="successBox">
+
+Project published successfully.
+
+</div>
+
+<div
+class="error"
+id="errorBox">
+
+Something went wrong.
+
+</div>
+
+</form>
+
+</div>
+
+</div>
+
+</div>
+
+<script src="../js/config.js"></script>
+<script src="../js/post-project.js"></script>
 
 </body>
 

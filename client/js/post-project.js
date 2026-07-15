@@ -1,59 +1,96 @@
-const API = "https://projexa-backend-13sp.onrender.com/api";
+// post-project.js
 
-const user = JSON.parse(localStorage.getItem("user"));
+const API =
+    window.API_URL ||
+    window.API ||
+    "https://projexa-backend-13sp.onrender.com/api";
 
-if (!user) {
-    alert("Please login first.");
-    window.location.href = "login.html";
+const token = localStorage.getItem("token");
+
+if (!token) {
+    window.location.href = "../login.html";
 }
 
-document.getElementById("projectForm").addEventListener("submit", async (e) => {
+const form = document.getElementById("projectForm");
+
+const title = document.getElementById("title");
+const category = document.getElementById("category");
+const level = document.getElementById("level");
+const status = document.getElementById("status");
+const skills = document.getElementById("skills");
+const description = document.getElementById("description");
+
+const submitBtn = document.getElementById("submitBtn");
+
+const successBox = document.getElementById("successBox");
+const errorBox = document.getElementById("errorBox");
+
+form.addEventListener("submit", publishProject);
+
+async function publishProject(e) {
 
     e.preventDefault();
 
-    const title = document.getElementById("title").value.trim();
-    const description = document.getElementById("description").value.trim();
-    const category = document.getElementById("category").value;
-    const budget = document.getElementById("budget").value;
-    const deadline = document.getElementById("deadline").value;
+    successBox.style.display = "none";
+    errorBox.style.display = "none";
+
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Publishing...";
 
     try {
+
+        const body = {
+
+            title: title.value.trim(),
+
+            category: category.value,
+
+            level: level.value,
+
+            status: status.value,
+
+            skills: skills.value
+                .split(",")
+                .map(skill => skill.trim())
+                .filter(skill => skill !== ""),
+
+            description: description.value.trim()
+
+        };
 
         const response = await fetch(`${API}/projects`, {
 
             method: "POST",
 
             headers: {
-                "Content-Type": "application/json"
+
+                "Content-Type": "application/json",
+
+                Authorization: `Bearer ${token}`
+
             },
 
-            body: JSON.stringify({
-
-                title,
-                description,
-                category,
-                budget,
-                deadline,
-                owner: user.id
-
-            })
+            body: JSON.stringify(body)
 
         });
 
         const data = await response.json();
 
-        if (data.success) {
+        if (!response.ok) {
 
-            alert("✅ Project Created Successfully");
-
-            // Redirect to My Projects
-            window.location.href = "my-projects.html";
-
-        } else {
-
-            alert(data.message);
+            throw new Error(data.message || "Unable to publish project.");
 
         }
+
+        successBox.style.display = "block";
+
+        form.reset();
+
+        setTimeout(() => {
+
+            window.location.href = "browse.html";
+
+        }, 1500);
 
     }
 
@@ -61,8 +98,18 @@ document.getElementById("projectForm").addEventListener("submit", async (e) => {
 
         console.error(err);
 
-        alert("Unable to connect to server.");
+        errorBox.innerText = err.message;
+
+        errorBox.style.display = "block";
 
     }
 
-});
+    finally {
+
+        submitBtn.disabled = false;
+
+        submitBtn.innerText = "Publish Project";
+
+    }
+
+}

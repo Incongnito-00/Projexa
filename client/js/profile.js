@@ -1,64 +1,222 @@
-const user = JSON.parse(localStorage.getItem("user"));
+// profile.js
 
-if(!user){
+const API =
+    window.API_URL ||
+    window.API ||
+    "https://projexa-backend-13sp.onrender.com/api";
 
-alert("Please login.");
+const token = localStorage.getItem("token");
 
-window.location.href="login.html";
+if (!token) {
+    window.location.href = "../login.html";
+}
+
+const loading = document.getElementById("loading");
+const profileContent = document.getElementById("profileContent");
+
+const avatar = document.getElementById("avatar");
+const nameElement = document.getElementById("name");
+const emailElement = document.getElementById("email");
+const collegeElement = document.getElementById("college");
+const joinedElement = document.getElementById("joined");
+
+const projectsCount = document.getElementById("projectsCount");
+const applicationsCount = document.getElementById("applicationsCount");
+const acceptedCount = document.getElementById("acceptedCount");
+
+const projectsList = document.getElementById("projectsList");
+const applicationsList = document.getElementById("applicationsList");
+
+let profile = {};
+
+async function loadProfile() {
+
+    try {
+
+        const response = await fetch(`${API}/users/profile`, {
+
+            headers: {
+
+                Authorization: `Bearer ${token}`
+
+            }
+
+        });
+
+        if (!response.ok) {
+
+            throw new Error("Unable to load profile.");
+
+        }
+
+        profile = await response.json();
+
+        renderProfile();
+
+    }
+
+    catch (err) {
+
+        console.error(err);
+
+        loading.innerHTML = `
+            <h2>Failed to load profile.</h2>
+        `;
+
+    }
 
 }
 
-document.getElementById("name").innerText=user.fullname;
+function renderProfile() {
 
-document.getElementById("email").innerText=user.email;
+    loading.style.display = "none";
+    profileContent.style.display = "block";
 
-document.getElementById("avatar").innerText=user.fullname.charAt(0).toUpperCase();
+    nameElement.textContent =
+        profile.name || "Unknown User";
 
-// Load saved profile
-const profile=JSON.parse(localStorage.getItem("profile_"+user.id));
+    emailElement.textContent =
+        profile.email || "";
 
-if(profile){
+    collegeElement.textContent =
+        profile.college || "";
 
-document.getElementById("college").value=profile.college||"";
+    joinedElement.textContent =
+        "Joined : " + formatDate(profile.created_at);
 
-document.getElementById("department").value=profile.department||"";
+    avatar.textContent =
+        (profile.name || "P").charAt(0).toUpperCase();
 
-document.getElementById("skills").value=profile.skills||"";
+    const projects = profile.projects || [];
+    const applications = profile.applications || [];
 
-document.getElementById("github").value=profile.github||"";
+    projectsCount.textContent = projects.length;
 
-document.getElementById("linkedin").value=profile.linkedin||"";
+    applicationsCount.textContent = applications.length;
 
-document.getElementById("about").value=profile.about||"";
+    acceptedCount.textContent =
+        applications.filter(app => app.status === "Accepted").length;
+
+    renderProjects(projects);
+
+    renderApplications(applications);
+
+}
+
+function renderProjects(projects) {
+
+    projectsList.innerHTML = "";
+
+    if (projects.length === 0) {
+
+        projectsList.innerHTML = `
+            <div class="item">
+                No projects posted yet.
+            </div>
+        `;
+
+        return;
+
+    }
+
+    projects.forEach(project => {
+
+        const div = document.createElement("div");
+
+        div.className = "item";
+
+        div.innerHTML = `
+
+            <div>
+
+                <strong>${project.title}</strong>
+
+                <br>
+
+                <small>
+
+                    ${project.category || "General"}
+
+                </small>
+
+            </div>
+
+            <span class="badge">
+
+                ${project.status || "Open"}
+
+            </span>
+
+        `;
+
+        projectsList.appendChild(div);
+
+    });
 
 }
 
-function saveProfile(){
+function renderApplications(applications) {
 
-const profile={
+    applicationsList.innerHTML = "";
 
-college:document.getElementById("college").value,
+    if (applications.length === 0) {
 
-department:document.getElementById("department").value,
+        applicationsList.innerHTML = `
+            <div class="item">
+                No applications submitted.
+            </div>
+        `;
 
-skills:document.getElementById("skills").value,
+        return;
 
-github:document.getElementById("github").value,
+    }
 
-linkedin:document.getElementById("linkedin").value,
+    applications.forEach(application => {
 
-about:document.getElementById("about").value
+        const div = document.createElement("div");
 
-};
+        div.className = "item";
 
-localStorage.setItem(
+        div.innerHTML = `
 
-"profile_"+user.id,
+            <div>
 
-JSON.stringify(profile)
+                <strong>
 
-);
+                    ${application.project_title || "Project"}
 
-alert("✅ Profile Saved Successfully");
+                </strong>
+
+                <br>
+
+                <small>
+
+                    ${formatDate(application.created_at)}
+
+                </small>
+
+            </div>
+
+            <span class="badge">
+
+                ${application.status}
+
+            </span>
+
+        `;
+
+        applicationsList.appendChild(div);
+
+    });
 
 }
+
+function formatDate(date) {
+
+    if (!date) return "";
+
+    return new Date(date).toLocaleDateString();
+
+}
+
+loadProfile();

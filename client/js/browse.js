@@ -1,117 +1,236 @@
-const API = "https://projexa-backend-13sp.onrender.com/api";
+// browse.js
+
+const API =
+  window.API_URL ||
+  window.API ||
+  "https://projexa-backend-13sp.onrender.com/api";
+
+const token = localStorage.getItem("token");
+
+if (!token) {
+    window.location.href = "../login.html";
+}
+
+const container = document.getElementById("projectsContainer");
+const searchInput = document.getElementById("searchInput");
+const categoryFilter = document.getElementById("categoryFilter");
+const loadMoreBtn = document.getElementById("loadMore");
+
+const totalProjects = document.getElementById("totalProjects");
+const openProjects = document.getElementById("openProjects");
+const categories = document.getElementById("categories");
+const developers = document.getElementById("developers");
 
 let allProjects = [];
+let visibleProjects = 9;
 
 async function loadProjects() {
 
     try {
 
-        const response = await fetch(`${API}/projects`);
+        const response = await fetch(`${API}/projects`, {
+
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+
+        });
+
+        if (!response.ok) {
+            throw new Error("Unable to fetch projects");
+        }
 
         const data = await response.json();
 
-        allProjects = data.projects || [];
+        allProjects = Array.isArray(data)
+            ? data
+            : data.projects || [];
 
-        renderProjects(allProjects);
+        updateStats();
 
-    }
+        renderProjects();
 
-    catch (err) {
+    } catch (err) {
 
         console.error(err);
 
+        container.innerHTML = `
+        <div style="
+        grid-column:1/-1;
+        text-align:center;
+        padding:60px;
+        color:#999;
+        ">
+        Failed to load projects.
+        </div>
+        `;
+
     }
 
 }
 
-function renderProjects(projects) {
+function updateStats() {
 
-    const container = document.getElementById("projectList");
+    totalProjects.textContent = allProjects.length;
+
+    const open = allProjects.filter(project => {
+
+        return project.status !== "Closed";
+
+    });
+
+    openProjects.textContent = open.length;
+
+    const uniqueCategories = new Set();
+
+    const uniqueUsers = new Set();
+
+    allProjects.forEach(project => {
+
+        if (project.category)
+            uniqueCategories.add(project.category);
+
+        if (project.user_id)
+            uniqueUsers.add(project.user_id);
+
+    });
+
+    categories.textContent = uniqueCategories.size;
+
+    developers.textContent = uniqueUsers.size;
+
+}
+
+function renderProjects() {
 
     container.innerHTML = "";
 
-    if (projects.length === 0) {
+    let filtered = allProjects.filter(project => {
 
-        container.innerHTML = `
+        const keyword = searchInput.value.toLowerCase();
 
-        <div class="card">
+        const searchMatch =
 
-        <h2>No Projects Found</h2>
+            (project.title || "").toLowerCase().includes(keyword) ||
+
+            (project.description || "").toLowerCase().includes(keyword);
+
+        const categoryMatch =
+
+            categoryFilter.value === "" ||
+
+            project.category === categoryFilter.value;
+
+        return searchMatch && categoryMatch;
+
+    });
+
+    filtered.slice(0, visibleProjects).forEach(project => {
+
+        const card = document.createElement("div");
+
+        card.className = "project";
+
+        card.innerHTML = `
+
+        <div class="banner"></div>
+
+        <div class="content">
+
+            <h3>${project.title}</h3>
+
+            <p>${truncate(project.description || "",160)}</p>
+
+            <div class="tags">
+
+                <span class="tag">${project.category || "General"}</span>
+
+                <span class="tag">${project.level || "Open"}</span>
+
+            </div>
+
+            <div class="meta">
+
+                <span>
+
+                    👤 ${project.owner_name || "Anonymous"}
+
+                </span>
+
+                <span>
+
+                    📅 ${formatDate(project.created_at)}
+
+                </span>
+
+            </div>
+
+            <a
+                href="project.html?id=${project.id}"
+                class="btn"
+            >
+                View Project
+            </a>
 
         </div>
 
         `;
 
-        return;
+        container.appendChild(card);
+
+    });
+
+    if (filtered.length <= visibleProjects) {
+
+        loadMoreBtn.style.display = "none";
+
+    } else {
+
+        loadMoreBtn.style.display = "block";
 
     }
 
-    projects.forEach(project => {
+}
 
-        container.innerHTML += `
+loadMoreBtn.addEventListener("click", () => {
 
-        <div class="card">
+    visibleProjects += 9;
 
-            <h2>${project.title}</h2>
+    renderProjects();
 
-            <p>${project.description}</p>
+});
 
-            <p><b>Category:</b> ${project.category}</p>
+searchInput.addEventListener("input", () => {
 
-            <p><b>Budget:</b> ₹${project.budget}</p>
+    visibleProjects = 9;
 
-            <p><b>Deadline:</b> ${project.deadline}</p>
+    renderProjects();
 
-            <button onclick="viewProject(${project.id})">
+});
 
-            View Project
+categoryFilter.addEventListener("change", () => {
 
-            </button>
+    visibleProjects = 9;
 
-        </div>
+    renderProjects();
 
-        `;
+});
 
-    });
+function truncate(text, max) {
+
+    if (text.length <= max)
+        return text;
+
+    return text.substring(0, max) + "...";
 
 }
 
-function searchProjects() {
+function formatDate(date) {
 
-    const keyword = document
-        .getElementById("search")
-        .value
-        .toLowerCase();
+    if (!date)
+        return "";
 
-    const category = document
-        .getElementById("filter")
-        .value;
-
-    const filtered = allProjects.filter(project => {
-
-        const matchesSearch =
-
-            project.title.toLowerCase().includes(keyword) ||
-
-            project.description.toLowerCase().includes(keyword);
-
-        const matchesCategory =
-
-            category === "" ||
-
-            project.category === category;
-
-        return matchesSearch && matchesCategory;
-
-    });
-
-    renderProjects(filtered);
-
-}
-
-function viewProject(id) {
-
-    window.location.href = `project.html?id=${id}`;
+    return new Date(date).toLocaleDateString();
 
 }
 

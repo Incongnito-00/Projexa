@@ -5,169 +5,552 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
-<title>Projexa Dashboard</title>
+<title>Dashboard | Projexa</title>
 
-<link rel="stylesheet" href="../css/main.css">
+<link rel="preconnect"
+href="https://fonts.googleapis.com">
+
+<link rel="preconnect"
+href="https://fonts.gstatic.com"
+crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap"
+rel="stylesheet">
+
+<link rel="stylesheet"
+href="../css/main.css">
+
+<link rel="stylesheet"
+href="../css/responsive.css">
 
 <style>
 
+:root{
+
+--bg:#0F1113;
+--card:#1B1F24;
+--border:#2B3138;
+
+--accent:#C6FF00;
+
+--text:#F5F7F8;
+--text2:#98A2B3;
+
+}
+
 *{
+
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:Arial,sans-serif;
+
 }
 
 body{
-background:#f4f7fc;
+
+background:var(--bg);
+
+color:var(--text);
+
+font-family:'Inter',sans-serif;
+
+overflow-x:hidden;
+
 }
 
-nav{
-background:#4F46E5;
-color:white;
-padding:18px 35px;
+a{
+
+text-decoration:none;
+
+color:inherit;
+
+}
+
+.dashboard{
+
 display:flex;
+
+min-height:100vh;
+
+}
+
+/* ======================
+SIDEBAR
+====================== */
+
+.sidebar{
+
+width:270px;
+
+background:#171A1D;
+
+border-right:1px solid var(--border);
+
+padding:30px;
+
+position:fixed;
+
+top:0;
+
+left:0;
+
+bottom:0;
+
+overflow:auto;
+
+}
+
+.logo{
+
+font-size:34px;
+
+font-family:'Space Grotesk',sans-serif;
+
+color:var(--accent);
+
+margin-bottom:45px;
+
+font-weight:700;
+
+}
+
+.menu{
+
+display:flex;
+
+flex-direction:column;
+
+gap:15px;
+
+}
+
+.menu a{
+
+padding:16px 20px;
+
+border-radius:14px;
+
+transition:.3s;
+
+font-weight:500;
+
+}
+
+.menu a:hover{
+
+background:var(--accent);
+
+color:#111;
+
+}
+
+.logout{
+
+margin-top:35px;
+
+background:#C6FF00;
+
+color:#111;
+
+text-align:center;
+
+font-weight:700;
+
+}
+
+/* ======================
+MAIN
+====================== */
+
+.main{
+
+margin-left:270px;
+
+width:calc(100% - 270px);
+
+padding:40px;
+
+}
+
+.topbar{
+
+display:flex;
+
 justify-content:space-between;
+
 align-items:center;
+
+margin-bottom:40px;
+
+gap:20px;
+
+flex-wrap:wrap;
+
 }
 
-nav h2{
-font-size:28px;
+.topbar h1{
+
+font-size:38px;
+
+font-family:'Space Grotesk',sans-serif;
+
 }
 
-nav button{
-background:#ef4444;
+.search{
+
+flex:1;
+
+max-width:420px;
+
+}
+
+.search input{
+
+width:100%;
+
+padding:15px;
+
+background:#1E2328;
+
+border:1px solid var(--border);
+
+border-radius:14px;
+
 color:white;
-border:none;
-padding:10px 18px;
-border-radius:8px;
-cursor:pointer;
-font-size:15px;
+
 }
 
-.container{
-width:90%;
-margin:30px auto;
+.profile{
+
+display:flex;
+
+align-items:center;
+
+gap:15px;
+
 }
 
-#welcome{
-margin-bottom:30px;
-color:#333;
+.avatar{
+
+width:48px;
+
+height:48px;
+
+border-radius:50%;
+
+background:var(--accent);
+
+color:#111;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+font-weight:700;
+
+font-size:20px;
+
 }
+
+/* ======================
+CARDS
+====================== */
 
 .stats{
 
 display:grid;
 
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+grid-template-columns:
+repeat(auto-fit,minmax(220px,1fr));
 
-gap:20px;
+gap:25px;
 
-margin-bottom:35px;
-
-}
-
-.stat-card{
-
-background:white;
-
-padding:25px;
-
-border-radius:12px;
-
-text-align:center;
-
-box-shadow:0 5px 15px rgba(0,0,0,.08);
+margin-bottom:45px;
 
 }
 
-.stat-card h2{
+.stat{
 
-color:#4F46E5;
+background:var(--card);
 
-font-size:35px;
+border:1px solid var(--border);
+
+border-radius:18px;
+
+padding:30px;
+
+transition:.35s;
+
+}
+
+.stat:hover{
+
+transform:translateY(-6px);
+
+border-color:var(--accent);
+
+}
+
+.stat h2{
+
+font-size:42px;
+
+margin-bottom:10px;
+
+color:var(--accent);
+
+}
+
+.stat p{
+
+color:var(--text2);
+
+}
+
+/* ======================
+QUICK ACTIONS
+====================== */
+
+.quick{
+
+display:grid;
+
+grid-template-columns:
+repeat(auto-fit,minmax(240px,1fr));
+
+gap:25px;
+
+margin-bottom:50px;
+
+}
+
+.action{
+
+background:var(--card);
+
+padding:30px;
+
+border-radius:18px;
+
+border:1px solid var(--border);
+
+transition:.35s;
+
+cursor:pointer;
+
+}
+
+.action:hover{
+
+transform:translateY(-8px);
+
+border-color:var(--accent);
+
+}
+
+.action h3{
+
+margin-top:20px;
 
 margin-bottom:10px;
 
 }
 
-.actions{
+.action p{
+
+color:var(--text2);
+
+line-height:1.7;
+
+}
+
+.icon{
+
+font-size:46px;
+
+}
+/* ======================
+RECENT PROJECTS
+====================== */
+
+.section-title{
+
+font-size:28px;
+
+font-family:'Space Grotesk',sans-serif;
+
+margin-bottom:25px;
+
+}
+
+.project-grid{
 
 display:grid;
 
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
 
-gap:20px;
+gap:25px;
 
 margin-bottom:40px;
 
 }
 
-.actions button{
+.project{
 
-width:100%;
+background:var(--card);
 
-padding:16px;
+border:1px solid var(--border);
 
-background:#4F46E5;
+border-radius:18px;
 
-color:white;
+padding:25px;
+
+transition:.35s;
+
+}
+
+.project:hover{
+
+transform:translateY(-8px);
+
+border-color:var(--accent);
+
+}
+
+.badge{
+
+display:inline-block;
+
+padding:8px 16px;
+
+background:rgba(198,255,0,.1);
+
+color:var(--accent);
+
+border-radius:30px;
+
+font-size:13px;
+
+margin-bottom:18px;
+
+}
+
+.project h3{
+
+margin-bottom:15px;
+
+}
+
+.project p{
+
+color:var(--text2);
+
+line-height:1.7;
+
+margin-bottom:20px;
+
+}
+
+.project button{
+
+padding:14px 22px;
+
+background:var(--accent);
 
 border:none;
-
-border-radius:10px;
-
-cursor:pointer;
-
-font-size:16px;
-
-transition:.3s;
-
-}
-
-.actions button:hover{
-
-background:#4338CA;
-
-}
-
-.card{
-
-background:white;
-
-padding:20px;
-
-margin-top:20px;
 
 border-radius:12px;
 
-box-shadow:0 5px 15px rgba(0,0,0,.08);
-
-}
-
-.card h2{
-
-margin-bottom:10px;
-
-}
-
-.card button{
-
-margin-top:15px;
-
-padding:10px 18px;
-
-background:#10B981;
-
-color:white;
-
-border:none;
-
-border-radius:8px;
+font-weight:700;
 
 cursor:pointer;
+
+}
+
+/* ======================
+RESPONSIVE
+====================== */
+
+@media(max-width:992px){
+
+.sidebar{
+
+position:relative;
+
+width:100%;
+
+height:auto;
+
+}
+
+.main{
+
+margin-left:0;
+
+width:100%;
+
+}
+
+.dashboard{
+
+flex-direction:column;
+
+}
+
+}
+
+@media(max-width:768px){
+
+.main{
+
+padding:20px;
+
+}
+
+.topbar{
+
+flex-direction:column;
+
+align-items:flex-start;
+
+}
+
+.topbar h1{
+
+font-size:30px;
+
+}
+
+.search{
+
+width:100%;
+
+max-width:100%;
+
+}
+
+.stats{
+
+grid-template-columns:1fr;
+
+}
+
+.quick{
+
+grid-template-columns:1fr;
+
+}
+
+.project-grid{
+
+grid-template-columns:1fr;
+
+}
 
 }
 
@@ -177,19 +560,39 @@ cursor:pointer;
 
 <body>
 
-<nav>
+<div class="dashboard">
 
-<h2>🚀 PROJEXA</h2>
+<aside class="sidebar">
 
-<button id="logoutBtn">
+<div class="logo">
 
-Logout
+PROJEXA
 
-</button>
+</div>
+
+<nav class="menu">
+
+<a href="dashboard.html">🏠 Dashboard</a>
+
+<a href="browse.html">📂 Browse Projects</a>
+
+<a href="post-project.html">➕ Post Project</a>
+
+<a href="my-projects.html">📁 My Projects</a>
+
+<a href="applications.html">📨 Applications</a>
+
+<a href="profile.html">👤 Profile</a>
+
+<a href="#" id="logoutBtn" class="logout">Logout</a>
 
 </nav>
 
-<div class="container">
+</aside>
+
+<main class="main">
+
+<div class="topbar">
 
 <h1 id="welcome">
 
@@ -197,103 +600,115 @@ Welcome
 
 </h1>
 
+<div class="search">
+
+<input
+type="text"
+placeholder="Search Projects...">
+
+</div>
+
+<div class="profile">
+
+<div class="avatar" id="avatar">
+
+P
+
+</div>
+
+</div>
+
+</div>
+
 <div class="stats">
 
-<div class="stat-card">
+<div class="stat">
 
-<h2 id="projectCount">
+<h2 id="projectCount">0</h2>
 
-0
-
-</h2>
-
-<p>
-
-Projects Created
-
-</p>
+<p>Projects</p>
 
 </div>
 
-<div class="stat-card">
+<div class="stat">
 
-<h2 id="applicationCount">
+<h2 id="applicationCount">0</h2>
 
-0
-
-</h2>
-
-<p>
-
-Applications
-
-</p>
+<p>Applications</p>
 
 </div>
 
-<div class="stat-card">
+<div class="stat">
 
-<h2 id="activeCount">
+<h2 id="activeCount">0</h2>
 
-0
-
-</h2>
-
-<p>
-
-Active Projects
-
-</p>
+<p>Active</p>
 
 </div>
 
 </div>
 
-<div class="actions">
+<div class="quick">
 
-<button onclick="window.location.href='post-project.html'">
+<div class="action"
+onclick="location.href='post-project.html'">
 
-➕ Create Project
+<div class="icon">➕</div>
 
-</button>
+<h3>Create Project</h3>
 
-<button onclick="window.location.href='browse.html'">
-
-📂 Browse Projects
-
-</button>
-
-<button onclick="window.location.href='my-projects.html'">
-
-📁 My Projects
-
-</button>
-
-<button onclick="window.location.href='my-applications.html'">
-
-📨 My Applications
-
-</button>
-
-<button onclick="window.location.href='profile.html'">
-
-👤 Profile
-
-</button>
+<p>Create and publish your engineering project.</p>
 
 </div>
 
-<h2>
+<div class="action"
+onclick="location.href='browse.html'">
+
+<div class="icon">📂</div>
+
+<h3>Browse</h3>
+
+<p>Discover exciting projects from students.</p>
+
+</div>
+
+<div class="action"
+onclick="location.href='applications.html'">
+
+<div class="icon">📨</div>
+
+<h3>Applications</h3>
+
+<p>Track all your project applications.</p>
+
+</div>
+
+<div class="action"
+onclick="location.href='profile.html'">
+
+<div class="icon">👤</div>
+
+<h3>Profile</h3>
+
+<p>Manage your account information.</p>
+
+</div>
+
+</div>
+
+<h2 class="section-title">
 
 Recent Projects
 
 </h2>
 
-<div id="projects">
+<div class="project-grid" id="projects">
 
 Loading...
 
 </div>
+
+</main>
 
 </div>
 
