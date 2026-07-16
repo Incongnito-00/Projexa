@@ -3,7 +3,7 @@
 const API =
     window.API_URL ||
     window.API ||
-    "https://YOUR-RENDER-BACKEND.onrender.com/api";
+    "https://projexa-backend-3ejy.onrender.com/api";
 
 const token = localStorage.getItem("token");
 
